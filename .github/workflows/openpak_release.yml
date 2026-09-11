@@ -22,7 +22,7 @@ jobs:
             libusb-1.0-0-dev libxrandr-dev libxi-dev libpangocairo-1.0-0 qt6-base-dev qt6-base-private-dev \
             qt6-svg-dev libbluetooth-dev libasound2-dev libpulse-dev libgl1-mesa-dev libcurl4-openssl-dev \
             libsystemd-dev libminiupnpc-dev libmbedtls-dev libhidapi-dev libpng-dev libpugixml-dev \
-            libsfml-dev libenet-dev libxxhash-dev libzstd-dev liblzma-dev libspng-dev libminizip-ng-dev \
+            libsfml-dev libenet-dev libxxhash-dev libzstd-dev liblzma-dev libspng-dev \
             libfmt-dev libxext-dev libgtk-3-dev
       - run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLINUX_LOCAL_DEV=true
       - run: cmake --build build -j$(nproc)
