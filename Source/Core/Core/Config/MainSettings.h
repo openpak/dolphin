@@ -168,6 +168,9 @@ extern const Info<bool> MAIN_REAL_WII_REMOTE_REPEAT_REPORTS;
 extern const Info<s32> MAIN_OVERRIDE_BOOT_IOS;
 extern const Info<std::string> MAIN_WII_NUS_SHOP_URL;
 extern const Info<bool> MAIN_WII_WIILINK_ENABLE;
+// OpenPak: resolve Nintendo WFC and GameSpy names to the OpenPak server (nn-wfc) inside IOS.
+extern const Info<bool> MAIN_WII_OPENPAK_ENABLE;
+extern const Info<std::string> MAIN_WII_OPENPAK_SERVER;
 
 // Main.DSP
 

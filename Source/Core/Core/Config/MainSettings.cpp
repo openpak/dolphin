@@ -285,6 +285,8 @@ const Info<bool> MAIN_ENABLE_SAVESTATES{{System::Main, "Core", "EnableSaveStates
 const Info<bool> MAIN_REAL_WII_REMOTE_REPEAT_REPORTS{
     {System::Main, "Core", "RealWiiRemoteRepeatReports"}, true};
 const Info<bool> MAIN_WII_WIILINK_ENABLE{{System::Main, "Core", "EnableWiiLink"}, false};
+const Info<bool> MAIN_WII_OPENPAK_ENABLE{{System::Main, "Core", "EnableOpenPak"}, false};
+const Info<std::string> MAIN_WII_OPENPAK_SERVER{{System::Main, "Core", "OpenPakServer"}, "145.241.199.19"};
 
 // Empty means use the Dolphin default URL
 const Info<std::string> MAIN_WII_NUS_SHOP_URL{{System::Main, "Core", "WiiNusShopUrl"}, ""};

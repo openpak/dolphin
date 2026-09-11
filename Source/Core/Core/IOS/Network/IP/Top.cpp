@@ -25,6 +25,7 @@
 #include "Common/Network.h"
 #include "Common/ScopeGuard.h"
 
+#include "Core/Config/MainSettings.h"
 #include "Core/Core.h"
 #include "Core/HW/Memmap.h"
 #include "Core/IOS/Network/ICMP.h"
@@ -810,12 +811,29 @@ IPCReply NetIPTopDevice::HandleGetHostIDRequest(const IOCtlRequest& request)
   return IPCReply(host_ip);
 }
 
+// OpenPak: with the option on, every Nintendo WFC / GameSpy / openpak.org name resolves to the
+// OpenPak server address as a dotted-quad literal, without touching the host resolver.
+static std::string OpenPakHostname(const std::string& hostname)
+{
+  if (!Config::Get(Config::MAIN_WII_OPENPAK_ENABLE))
+    return hostname;
+  static const char* const suffixes[] = {".nintendowifi.net", ".gamespy.com", ".nintendo.net",
+                                         ".openpak.org"};
+  for (const char* suffix : suffixes)
+  {
+    const size_t n = std::strlen(suffix);
+    if (hostname.size() >= n && hostname.compare(hostname.size() - n, n, suffix) == 0)
+      return Config::Get(Config::MAIN_WII_OPENPAK_SERVER);
+  }
+  return hostname;
+}
+
 IPCReply NetIPTopDevice::HandleInetAToNRequest(const IOCtlRequest& request)
 {
   auto& system = GetSystem();
   auto& memory = system.GetMemory();
 
-  const std::string hostname = memory.GetString(request.buffer_in);
+  const std::string hostname = OpenPakHostname(memory.GetString(request.buffer_in));
   hostent* remoteHost = gethostbyname(hostname.c_str());
 
   if (remoteHost == nullptr || remoteHost->h_addr_list == nullptr ||
@@ -935,7 +953,7 @@ IPCReply NetIPTopDevice::HandleGetHostByNameRequest(const IOCtlRequest& request)
   auto& system = GetSystem();
   auto& memory = system.GetMemory();
 
-  const std::string hostname = memory.GetString(request.buffer_in);
+  const std::string hostname = OpenPakHostname(memory.GetString(request.buffer_in));
   hostent* remoteHost = gethostbyname(hostname.c_str());
 
   INFO_LOG_FMT(IOS_NET,
@@ -1289,6 +1307,7 @@ IPCReply NetIPTopDevice::HandleGetAddressInfoRequest(const IOCtlVRequest& reques
     {
       nodeNameStr = patch.value();
     }
+    nodeNameStr = OpenPakHostname(nodeNameStr);
     pNodeName = nodeNameStr.c_str();
   }
 

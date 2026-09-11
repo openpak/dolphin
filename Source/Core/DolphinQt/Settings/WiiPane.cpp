@@ -115,6 +115,8 @@ void WiiPane::CreateMisc()
   m_screensaver_checkbox = new ConfigBool(tr("Enable Screen Saver"), Config::SYSCONF_SCREENSAVER);
   m_wiilink_checkbox =
       new ConfigBool(tr("Enable WiiConnect24 via WiiLink"), Config::MAIN_WII_WIILINK_ENABLE);
+  m_openpak_checkbox =
+      new ConfigBool(tr("Connect Nintendo WFC to OpenPak"), Config::MAIN_WII_OPENPAK_ENABLE);
   m_connect_keyboard_checkbox =
       new ConfigBool(tr("Connect USB Keyboard"), Config::MAIN_WII_KEYBOARD);
 
@@ -142,6 +144,10 @@ void WiiPane::CreateMisc()
       tr("Sets the Wii display mode to 60Hz (480i) instead of 50Hz "
          "(576i) for PAL games.\nMay not work for all games."));
   m_screensaver_checkbox->SetDescription(tr("Dims the screen after five minutes of inactivity."));
+  m_openpak_checkbox->SetDescription(tr(
+      "Resolves Nintendo WFC and GameSpy hostnames to the OpenPak server, so games that used Nintendo "
+      "Wi-Fi Connection play on OpenPak. Apply the OpenPak stage-0 Gecko code for the game as well."
+      "<br><br><dolphin_emphasis>If unsure, leave this unchecked.</dolphin_emphasis>"));
   m_wiilink_checkbox->SetDescription(tr(
       "Enables the WiiLink service for WiiConnect24 channels.\nWiiLink is an alternate provider "
       "for the discontinued WiiConnect24 Channels such as the Forecast and Nintendo Channels\nRead "
@@ -154,6 +160,7 @@ void WiiPane::CreateMisc()
   misc_settings_group_layout->addWidget(m_connect_keyboard_checkbox, 0, 1, 1, 1);
   misc_settings_group_layout->addWidget(m_screensaver_checkbox, 1, 0, 1, 1);
   misc_settings_group_layout->addWidget(m_wiilink_checkbox, 1, 1, 1, 1);
+  misc_settings_group_layout->addWidget(m_openpak_checkbox, 5, 0, 1, 2);
   misc_settings_group_layout->addWidget(m_aspect_ratio_choice_label, 2, 0, 1, 1);
   misc_settings_group_layout->addWidget(m_aspect_ratio_choice, 2, 1, 1, 1);
   misc_settings_group_layout->addWidget(m_system_language_choice_label, 3, 0, 1, 1);
@@ -344,6 +351,7 @@ void WiiPane::OnEmulationStateChanged(bool running)
   m_wiimote_ir_sensitivity->setEnabled(!running);
   m_wiimote_ir_sensor_position->setEnabled(!running);
   m_wiilink_checkbox->setEnabled(!running);
+  m_openpak_checkbox->setEnabled(!running);
 }
 
 void WiiPane::ValidateSelectionState()
