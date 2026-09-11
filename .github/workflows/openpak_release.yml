@@ -32,7 +32,45 @@ jobs:
         with:
           name: dolphin-openpak-linux-x86_64
           path: dolphin-openpak-*.tar.gz
-      - if: startsWith(github.ref, 'refs/tags/openpak-v')
-        run: gh release create "${GITHUB_REF_NAME}" dolphin-openpak-*.tar.gz --repo "${GITHUB_REPOSITORY}" --title "Dolphin ${GITHUB_REF_NAME} (OpenPak)" --generate-notes
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - run: brew install cmake ninja qt@6 ffmpeg
+      - run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qt@6)" -DENABLE_TESTS=OFF
+      - run: cmake --build build -j$(sysctl -n hw.ncpu)
+      - run: cd build/Binaries && zip -r -y ../../dolphin-openpak-${GITHUB_REF_NAME}-macos-arm64.zip Dolphin.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dolphin-openpak-macos-arm64
+          path: dolphin-openpak-*.zip
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DENABLE_TESTS=OFF
+      - run: cmake --build build --config Release -- /m
+      - shell: bash
+        run: cd build/Binaries/Release && 7z a ../../../dolphin-openpak-${GITHUB_REF_NAME}-windows-x64.zip . >/dev/null && ls -la ../../../*.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dolphin-openpak-windows-x64
+          path: dolphin-openpak-*.zip
+  release:
+    needs: [linux, macos, windows]
+    if: startsWith(github.ref, 'refs/tags/openpak-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - run: gh release create "${GITHUB_REF_NAME}" artifacts/* --repo "${GITHUB_REPOSITORY}" --title "Dolphin ${GITHUB_REF_NAME} (OpenPak)" --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
