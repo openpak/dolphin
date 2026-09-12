@@ -33,6 +33,7 @@
 
 #include "DolphinQt/Host.h"
 #include "DolphinQt/MainWindow.h"
+#include "DolphinQt/OpenPak/OpenPak.h"
 #include "DolphinQt/QtUtils/AnalyticsPrompt.h"
 #include "DolphinQt/QtUtils/ModalMessageBox.h"
 #include "DolphinQt/QtUtils/RunOnObject.h"
@@ -194,6 +195,7 @@ int main(int argc, char* argv[])
   UICommon::SetUserDirectory(static_cast<const char*>(options.get("user")));
   UICommon::CreateDirectories();
   UICommon::Init();
+  OpenPak::Init();
   Resources::Init();
   Settings::Instance().SetBatchModeEnabled(options.is_set("batch"));
 

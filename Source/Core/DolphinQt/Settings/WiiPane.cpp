@@ -3,6 +3,8 @@
 
 #include "DolphinQt/Settings/WiiPane.h"
 
+#include "DolphinQt/OpenPak/OpenPak.h"
+
 #include <array>
 #include <future>
 #include <optional>
@@ -161,6 +163,9 @@ void WiiPane::CreateMisc()
   misc_settings_group_layout->addWidget(m_screensaver_checkbox, 1, 0, 1, 1);
   misc_settings_group_layout->addWidget(m_wiilink_checkbox, 1, 1, 1, 1);
   misc_settings_group_layout->addWidget(m_openpak_checkbox, 5, 0, 1, 2);
+
+  // OpenPak: account and cloud saves (WD-1); everything lives in the OpenPak module.
+  m_main_layout->addWidget(OpenPak::CreateWiiPaneSection(this));
   misc_settings_group_layout->addWidget(m_aspect_ratio_choice_label, 2, 0, 1, 1);
   misc_settings_group_layout->addWidget(m_aspect_ratio_choice, 2, 1, 1, 1);
   misc_settings_group_layout->addWidget(m_system_language_choice_label, 3, 0, 1, 1);

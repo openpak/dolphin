@@ -404,6 +404,8 @@ add_library(core
   IOS/MIOS.h
   IOS/Network/ICMP.h
   IOS/Network/ICMPLin.cpp
+  IOS/Network/IP/OpenPakRedirect.cpp
+  IOS/Network/IP/OpenPakRedirect.h
   IOS/Network/IP/Top.cpp
   IOS/Network/IP/Top.h
   IOS/Network/KD/NetKDRequest.cpp

@@ -26,6 +26,7 @@
 #include "Common/ScopeGuard.h"
 
 #include "Core/Config/MainSettings.h"
+#include "Core/IOS/Network/IP/OpenPakRedirect.h"
 #include "Core/Core.h"
 #include "Core/HW/Memmap.h"
 #include "Core/IOS/Network/ICMP.h"
@@ -811,20 +812,16 @@ IPCReply NetIPTopDevice::HandleGetHostIDRequest(const IOCtlRequest& request)
   return IPCReply(host_ip);
 }
 
-// OpenPak: with the option on, every Nintendo WFC / GameSpy / openpak.org name resolves to the
-// OpenPak server address as a dotted-quad literal, without touching the host resolver.
+// OpenPak: with the option on, every name on the applied redirect list resolves to the
+// OpenPak server address as a dotted-quad literal, without touching the host resolver. The
+// list and the address come from the fetched network profile; the compiled-in list and
+// MAIN_WII_OPENPAK_SERVER apply until one arrives (OpenPakRedirect.h).
 static std::string OpenPakHostname(const std::string& hostname)
 {
   if (!Config::Get(Config::MAIN_WII_OPENPAK_ENABLE))
     return hostname;
-  static const char* const suffixes[] = {".nintendowifi.net", ".gamespy.com", ".nintendo.net",
-                                         ".openpak.org"};
-  for (const char* suffix : suffixes)
-  {
-    const size_t n = std::strlen(suffix);
-    if (hostname.size() >= n && hostname.compare(hostname.size() - n, n, suffix) == 0)
-      return Config::Get(Config::MAIN_WII_OPENPAK_SERVER);
-  }
+  if (Core::OpenPakRedirect::RedirectSuffixMatch(hostname))
+    return Core::OpenPakRedirect::ServerAddress();
   return hostname;
 }
 
