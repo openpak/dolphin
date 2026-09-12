@@ -134,3 +134,6 @@
 	path = Externals/wil
 	url = https://github.com/microsoft/wil.git
 	shallow = true
+[submodule "Externals/openpak-client"]
+	path = Externals/openpak-client
+	url = https://github.com/openpak/openpak-client.git

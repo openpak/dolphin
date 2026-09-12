@@ -22,6 +22,8 @@ message(STATUS "Found Qt version ${Qt6_VERSION}")
 set_property(TARGET Qt6::Core PROPERTY INTERFACE_COMPILE_FEATURES "")
 
 add_executable(dolphin-emu
+  OpenPak/OpenPak.cpp
+  OpenPak/OpenPak.h
   AboutDialog.cpp
   AboutDialog.h
   CheatSearchFactoryWidget.cpp
@@ -458,6 +460,7 @@ PRIVATE
   uicommon
   imgui
   implot
+  openpak::client
 )
 
 if(ENABLE_SDL)
