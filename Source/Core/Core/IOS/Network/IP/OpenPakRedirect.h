@@ -1,4 +1,4 @@
-// OpenPak: the applied network profile (prds/emulator-network-profile-prd.md §4c).
+// OpenPak: the applied network profile (emulators/prds/emulator-network-profile-prd.md §4c).
 // At launch the fetched profile replaces the compiled-in suffix list and, when it carries
 // one, the server address; until then the compiled-in list and MAIN_WII_OPENPAK_SERVER
 // apply. This holder is the seam between the profile fetched in the Qt layer and the

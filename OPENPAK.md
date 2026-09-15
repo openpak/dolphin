@@ -14,7 +14,7 @@ instead of asking the host resolver. Apply the game's OpenPak stage-0 Gecko code
 WiiLink's patcher does.
 
 The redirect list and the address are **not compiled in any more** (EP-2,
-`prds/emulator-network-profile-prd.md`). At launch Dolphin fetches the network profile
+`emulators/prds/emulator-network-profile-prd.md`). At launch Dolphin fetches the network profile
 (`openpak-client`, one conditional request, two seconds); what applies is:
 
 1. the fetched profile (`Source/.../OpenPak/OpenPak.cpp` applies it to
@@ -39,7 +39,7 @@ uploaded to `saves` under platform `wii` and the title id as key; when a game bo
 machine whose local save directory is empty, the cloud copy is downloaded and applied. A local
 save is never overwritten by the automatic path — conflicts resolve on openpak.org, which
 keeps every version. Server side: the same `/api/v1/me/saves/{platform}/{title}` the website
-and phone app use (`prds/cloud-saves-prd.md` CS-06, platform ids S-1).
+and phone app use (`saves/prds/cloud-saves-prd.md` CS-06, platform ids S-1).
 
 The zip is `openpak::ZipStore` (store method, no compression, no dependencies); Wii NAND saves
 are directory trees, so one versioned blob per title holds the whole folder. Entries the
