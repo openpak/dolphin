@@ -769,6 +769,15 @@ elseif(MSVC)
   endif()
 endif()
 add_subdirectory(Externals/openpak-client)
+if(MSVC)
+  # Dolphin's /WX is for Dolphin's code; the library uses the plain C runtime calls.
+  foreach(openpak_target openpak_client openpak_qt)
+    if(TARGET ${openpak_target})
+      target_compile_options(${openpak_target} PRIVATE /WX-)
+      target_compile_definitions(${openpak_target} PRIVATE _CRT_SECURE_NO_WARNINGS)
+    endif()
+  endforeach()
+endif()
 
 # Any other platform or BSD is currently unsupported by cpp-ipc
 if(WIN32 OR LINUX OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR CMAKE_SYSTEM_NAME STREQUAL "QNX")
