@@ -32,6 +32,7 @@ jobs:
         with:
           name: dolphin-openpak-linux-x86_64
           path: dolphin-openpak-*.tar.gz
+          retention-days: 3
   macos:
     runs-on: macos-14
     steps:
@@ -46,6 +47,7 @@ jobs:
         with:
           name: dolphin-openpak-macos-arm64
           path: dolphin-openpak-*.zip
+          retention-days: 3
   windows:
     runs-on: windows-2022
     steps:
@@ -60,6 +62,7 @@ jobs:
         with:
           name: dolphin-openpak-windows-x64
           path: dolphin-openpak-*.zip
+          retention-days: 3
   release:
     needs: [linux, macos, windows]
     if: startsWith(github.ref, 'refs/tags/openpak-v')
