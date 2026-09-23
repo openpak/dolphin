@@ -54,6 +54,23 @@ source was used — fetched, cached or built-in — and the profile version.
   pushed, push failed and conflict, and friends coming online or asking (the website's friend
   list, polled every 30 s).
 
+## Android (UX spec §4, N3)
+
+- **Where:** the first row of Settings ("OpenPak", with "Signed in as {name}" / "Not signed in"),
+  a person icon in the home toolbar, an "OpenPak" entry in the in-game menu, and a Config →
+  OpenPak section (the WFC switch, account row, Open OpenPak..., cloud sync, Show notifications,
+  Advanced → Refresh network settings).
+- **Screens** (Compose, Material 3): OpenPak home, Account, read-only Friends, not-here panels for
+  Invitations and News, a read-only Mods catalogue, Cloud saves (wii only; Download, Upload,
+  Delete, the conflict sheet), Status, a full-screen sign-in and the connect screen.
+- **Native bridge:** `Source/Android/jni/OpenPakNative.cpp`; every network call runs off the main
+  thread. Cloud saves around a run are hooked into `Run()` in `MainAndroid.cpp` (pull with a
+  five-second ceiling and Skip, push on stop, conflict pauses sync).
+- **OpenSSL:** the NDK has none; `CMake/OpenPakAndroidOpenSSL.cmake` downloads the pinned
+  prebuilt static OpenSSL Eden's Android build uses. The release publishes a debug-signed APK.
+- Not yet: the Website field, a toolbar avatar, system notifications (nothing for the Wii family
+  to post), a keychain for the token.
+
 ## Cloud saves
 
 WFC has no accounts, so Dolphin's OpenPak account is a website sign-in and nothing more
