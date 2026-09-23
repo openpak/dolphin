@@ -16,6 +16,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import org.dolphinemu.dolphinemu.NativeLibrary
+import org.dolphinemu.dolphinemu.features.openpak.model.OpenPak
 import org.dolphinemu.dolphinemu.R
 import org.dolphinemu.dolphinemu.features.settings.model.BooleanSetting
 import org.dolphinemu.dolphinemu.features.settings.model.IntSetting
@@ -77,6 +78,7 @@ object DirectoryInitialization {
 
         extractSysDirectory(context)
         NativeLibrary.Initialize()
+        OpenPak.init(context)
 
         areDirectoriesAvailable = true
 

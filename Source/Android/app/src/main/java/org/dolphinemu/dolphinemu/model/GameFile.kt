@@ -26,6 +26,9 @@ class GameFile private constructor(private val pointer: Long) {
 
     external fun getGameId(): String
 
+    /** The 64-bit title id (Wii discs and WADs); 0 when there is none. */
+    external fun getTitleId(): Long
+
     external fun getGameTdbId(): String
 
     external fun getDiscNumber(): Int

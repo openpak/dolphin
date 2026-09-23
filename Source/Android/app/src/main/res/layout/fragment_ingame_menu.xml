@@ -87,6 +87,11 @@
                 android:text="@string/grid_menu_settings" />
 
             <Button
+                android:id="@+id/menu_openpak"
+                style="@style/InGameMenuOption"
+                android:text="@string/openpak_menu_title" />
+
+            <Button
                 android:id="@+id/menu_overlay_controls"
                 style="@style/InGameMenuOption"
                 android:text="@string/emulation_overlay_controls" />

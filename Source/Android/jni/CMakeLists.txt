@@ -34,6 +34,8 @@ add_library(main SHARED
   NetPlay/NetPlayUICallbacks.cpp
   NetPlay/NetPlayUICallbacks.h
   MainAndroid.cpp
+  OpenPakNative.cpp
+  OpenPakNative.h
   RiivolutionPatches.cpp
   SkylanderConfig.cpp
   WiiUtils.cpp
@@ -46,7 +48,11 @@ PRIVATE
   core
   inputcommon
   uicommon
+  openpak::client
 )
+
+# OpenPak: the client library throws and catches; the bridge catches what reaches it.
+set_source_files_properties(OpenPakNative.cpp PROPERTIES COMPILE_OPTIONS -fexceptions)
 
 target_link_libraries(main
 PRIVATE
