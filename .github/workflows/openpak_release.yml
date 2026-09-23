@@ -70,7 +70,8 @@ jobs:
   windows:
     needs: [release]
     if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
-    runs-on: windows-2022
+    # Dolphin needs Visual Studio 2026 (Source/PCH/pch.h).
+    runs-on: windows-2025-vs2026
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,7 +80,7 @@ jobs:
       - run: vcpkg install openssl:x64-windows-static-md
       - shell: bash
         run: >
-          cmake -B build -G "Visual Studio 17 2022" -A x64 -DENABLE_TESTS=OFF
+          cmake -B build -G "Visual Studio 18 2026" -A x64 -DENABLE_TESTS=OFF
           -DOPENSSL_ROOT_DIR="$VCPKG_INSTALLATION_ROOT/installed/x64-windows-static-md" -DOPENSSL_USE_STATIC_LIBS=ON
       - run: cmake --build build --config Release -- /m
       - shell: bash
