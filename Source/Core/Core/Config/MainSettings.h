@@ -173,6 +173,7 @@ extern const Info<bool> MAIN_WII_OPENPAK_ENABLE;
 extern const Info<std::string> MAIN_WII_OPENPAK_SERVER;
 // OpenPak: cloud saves (Settings -> Wii).
 extern const Info<bool> MAIN_OPENPAK_CLOUD_SAVE;
+extern const Info<bool> MAIN_OPENPAK_NOTIFICATIONS;
 
 // Main.DSP
 

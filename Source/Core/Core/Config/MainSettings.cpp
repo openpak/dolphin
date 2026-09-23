@@ -289,7 +289,9 @@ const Info<bool> MAIN_WII_OPENPAK_ENABLE{{System::Main, "Core", "EnableOpenPak"}
 const Info<std::string> MAIN_WII_OPENPAK_SERVER{{System::Main, "Core", "OpenPakServer"}, "145.241.199.19"};
 // OpenPak: cloud saves. Syncs each Wii title's NAND save to the signer's OpenPak
 // account when emulation stops, and pulls it back when there is no local save.
-const Info<bool> MAIN_OPENPAK_CLOUD_SAVE{{System::Main, "Core", "OpenPakCloudSave"}, false};
+const Info<bool> MAIN_OPENPAK_CLOUD_SAVE{{System::Main, "Core", "OpenPakCloudSave"}, true};
+// OpenPak: "Show notifications" (cloud-save results and the like).
+const Info<bool> MAIN_OPENPAK_NOTIFICATIONS{{System::Main, "Core", "OpenPakNotifications"}, true};
 
 // Empty means use the Dolphin default URL
 const Info<std::string> MAIN_WII_NUS_SHOP_URL{{System::Main, "Core", "WiiNusShopUrl"}, ""};
