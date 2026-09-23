@@ -21,7 +21,11 @@ import kotlinx.coroutines.withContext
 import org.dolphinemu.dolphinemu.NativeLibrary
 import org.dolphinemu.dolphinemu.R
 import org.dolphinemu.dolphinemu.activities.UserDataActivity
+import androidx.lifecycle.lifecycleScope
 import org.dolphinemu.dolphinemu.features.input.model.ControlGroupEnabledSetting
+import org.dolphinemu.dolphinemu.features.openpak.model.OpenPak
+import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakActivity
+import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakUi
 import org.dolphinemu.dolphinemu.features.input.model.InputMappingBooleanSetting
 import org.dolphinemu.dolphinemu.features.input.model.InputMappingDoubleSetting
 import org.dolphinemu.dolphinemu.features.input.model.InputMappingIntSetting
@@ -295,6 +299,7 @@ class SettingsFragmentPresenter(
                 MenuTag.CONFIG_PATHS -> addPathsSettings(sl)
                 MenuTag.CONFIG_GAME_CUBE -> addGameCubeSettings(sl)
                 MenuTag.CONFIG_WII -> addWiiSettings(sl)
+                MenuTag.CONFIG_OPENPAK -> addOpenPakSettings(sl)
                 MenuTag.CONFIG_ACHIEVEMENTS -> addAchievementSettings(sl)
                 MenuTag.CONFIG_ADVANCED -> addAdvancedSettings(sl)
                 MenuTag.GRAPHICS -> addGraphicsSettings(sl)
@@ -346,6 +351,14 @@ class SettingsFragmentPresenter(
     }
 
     private fun addTopLevelSettings(sl: ArrayList<SettingsItem>) {
+        // OpenPak first (openpak-ux-spec §4.1): who is signed in, and the way to the home screen.
+        sl.add(
+            RunRunnable(
+                context.getString(R.string.openpak_menu_title),
+                OpenPak.accountLine(context),
+                true,
+                R.drawable.ic_openpak
+            ) { OpenPakActivity.launch(context, OpenPakActivity.Screen.HOME) })
         sl.add(SubmenuSetting(context, R.string.config, MenuTag.CONFIG))
         sl.add(SubmenuSetting(context, R.string.graphics_settings, MenuTag.GRAPHICS))
 
@@ -364,6 +377,7 @@ class SettingsFragmentPresenter(
         sl.add(SubmenuSetting(context, R.string.paths_submenu, MenuTag.CONFIG_PATHS))
         sl.add(SubmenuSetting(context, R.string.gamecube_submenu, MenuTag.CONFIG_GAME_CUBE))
         sl.add(SubmenuSetting(context, R.string.wii_submenu, MenuTag.CONFIG_WII))
+        sl.add(SubmenuSetting(context, R.string.openpak_settings_section, MenuTag.CONFIG_OPENPAK))
         sl.add(SubmenuSetting(context, R.string.achievements_submenu, MenuTag.CONFIG_ACHIEVEMENTS))
         sl.add(SubmenuSetting(context, R.string.advanced_submenu, MenuTag.CONFIG_ADVANCED))
         sl.add(SubmenuSetting(context, R.string.log_submenu, MenuTag.CONFIG_LOG))
@@ -1080,6 +1094,100 @@ class SettingsFragmentPresenter(
                 context, BooleanSetting.MAIN_WII_SPEAK_MUTED, R.string.mute_wii_speak, 0
             )
         )
+    }
+
+    /** The OpenPak section of openpak-ux-spec §3.13, as preference rows (§4.1), Wii family. */
+    private fun addOpenPakSettings(sl: ArrayList<SettingsItem>) {
+        val activity = fragmentView.fragmentActivity
+        val state = OpenPak.state()
+
+        // Turning the connection on fetches the network profile the start-up fetch skipped.
+        val enableSetting: AbstractBooleanSetting = object : AbstractBooleanSetting {
+            override val boolean: Boolean
+                get() = BooleanSetting.MAIN_WII_OPENPAK_ENABLE.boolean
+
+            override fun setBoolean(settings: Settings, newValue: Boolean) {
+                BooleanSetting.MAIN_WII_OPENPAK_ENABLE.setBoolean(settings, newValue)
+                if (newValue) {
+                    activity.lifecycleScope.launch { refreshOpenPakNetwork() }
+                }
+            }
+
+            override val isOverridden: Boolean
+                get() = BooleanSetting.MAIN_WII_OPENPAK_ENABLE.isOverridden
+
+            override val isRuntimeEditable: Boolean
+                get() = BooleanSetting.MAIN_WII_OPENPAK_ENABLE.isRuntimeEditable
+
+            override fun delete(settings: Settings): Boolean =
+                BooleanSetting.MAIN_WII_OPENPAK_ENABLE.delete(settings)
+        }
+
+        sl.add(HeaderSetting(context, R.string.openpak_settings_account, 0))
+        sl.add(
+            SwitchSetting(
+                context,
+                enableSetting,
+                R.string.openpak_settings_enable_wfc,
+                R.string.openpak_settings_enable_tip
+            )
+        )
+        sl.add(
+            RunRunnable(
+                OpenPak.accountLine(context),
+                context.getString(
+                    if (state.signedIn) R.string.openpak_menu_sign_out
+                    else R.string.openpak_common_sign_in_button
+                ),
+                false
+            ) {
+                if (state.signedIn) {
+                    OpenPakUi.confirmSignOut(activity) { loadSettingsList() }
+                } else {
+                    OpenPakActivity.launch(context, OpenPakActivity.Screen.SIGN_IN)
+                }
+            })
+        sl.add(
+            RunRunnable(context.getString(R.string.openpak_settings_open), "", true) {
+                OpenPakActivity.launch(context, OpenPakActivity.Screen.HOME)
+            })
+        sl.add(
+            SwitchSetting(
+                context,
+                BooleanSetting.MAIN_OPENPAK_CLOUD_SAVE,
+                R.string.openpak_settings_cloud_sync,
+                0
+            )
+        )
+
+        sl.add(HeaderSetting(context, R.string.openpak_settings_notifications_heading, 0))
+        sl.add(
+            SwitchSetting(
+                context,
+                BooleanSetting.MAIN_OPENPAK_NOTIFICATIONS,
+                R.string.openpak_settings_notifications,
+                0
+            )
+        )
+
+        sl.add(HeaderSetting(context, R.string.openpak_settings_advanced, 0))
+        val summary = openPakNetworkSummary ?: OpenPak.networkSummary()
+        sl.add(
+            RunRunnable(
+                context.getString(R.string.openpak_settings_refresh_network),
+                context.getString(R.string.openpak_settings_network_status, summary),
+                true
+            ) { activity.lifecycleScope.launch { refreshOpenPakNetwork() } })
+    }
+
+    private var openPakNetworkSummary: String? = null
+
+    /** Off the UI thread (openpak-ux-spec §5.2); the status line updates when it answers. */
+    private suspend fun refreshOpenPakNetwork() {
+        openPakNetworkSummary = OpenPak.refreshNetwork()
+        if (menuTag == MenuTag.CONFIG_OPENPAK) {
+            loadSettingsList()
+        }
     }
 
     private fun addAchievementSettings(sl: ArrayList<SettingsItem>) {

@@ -134,6 +134,12 @@
             android:theme="@style/Theme.Dolphin.Main" />
 
         <activity
+            android:name=".features.openpak.ui.OpenPakActivity"
+            android:exported="false"
+            android:label="@string/openpak_menu_title"
+            android:theme="@style/Theme.Dolphin.Main" />
+
+        <activity
             android:name=".features.netplay.ui.NetplaySetupActivity"
             android:exported="false"
             android:theme="@style/Theme.Dolphin.Main" />

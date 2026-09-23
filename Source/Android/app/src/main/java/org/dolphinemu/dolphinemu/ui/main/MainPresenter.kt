@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.dolphinemu.dolphinemu.BuildConfig
 import org.dolphinemu.dolphinemu.R
+import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakActivity
 import org.dolphinemu.dolphinemu.activities.EmulationActivity
 import org.dolphinemu.dolphinemu.features.settings.model.BooleanSetting
 import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag
@@ -134,6 +135,11 @@ class MainPresenter(private val mainView: MainView, private val activity: Fragme
     fun handleOptionSelection(itemId: Int, activity: ComponentActivity): Boolean = when (itemId) {
         R.id.menu_settings -> {
             mainView.launchSettingsActivity(MenuTag.SETTINGS)
+            true
+        }
+
+        R.id.menu_openpak -> {
+            OpenPakActivity.launch(activity, OpenPakActivity.Screen.HOME)
             true
         }
 

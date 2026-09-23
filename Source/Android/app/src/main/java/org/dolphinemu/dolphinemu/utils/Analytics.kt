@@ -7,6 +7,7 @@ import androidx.annotation.Keep
 import androidx.fragment.app.FragmentActivity
 import org.dolphinemu.dolphinemu.DolphinApplication
 import org.dolphinemu.dolphinemu.dialogs.AnalyticsDialog
+import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakUi
 import org.dolphinemu.dolphinemu.features.settings.model.BooleanSetting
 import org.dolphinemu.dolphinemu.features.settings.model.Settings
 
@@ -17,10 +18,14 @@ object Analytics {
     private const val DEVICE_TYPE = "DEVICE_TYPE"
 
     @JvmStatic
-    fun checkAnalyticsInit(activity: FragmentActivity) {
+    fun checkAnalyticsInit(activity: FragmentActivity, offerOpenPak: Boolean = true) {
         AfterDirectoryInitializationRunner().runWithLifecycle(activity) {
             if (!BooleanSetting.MAIN_ANALYTICS_PERMISSION_ASKED.boolean) {
                 AnalyticsDialog().show(activity.supportFragmentManager, AnalyticsDialog.TAG)
+            } else if (offerOpenPak) {
+                // OpenPak's connect screen follows Dolphin's own onboarding, once per install,
+                // and never when the app was started to play a game.
+                OpenPakUi.maybeShowConnect(activity)
             }
         }
     }

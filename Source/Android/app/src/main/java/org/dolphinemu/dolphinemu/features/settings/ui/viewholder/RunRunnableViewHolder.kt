@@ -28,6 +28,11 @@ class RunRunnableViewHolder(
 
         mBinding.textSettingName.text = setting.name
         mBinding.textSettingDescription.text = setting.description
+        mBinding.textSettingName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            setting.iconId, 0, 0, 0
+        )
+        mBinding.textSettingName.compoundDrawablePadding =
+            mContext.resources.getDimensionPixelSize(R.dimen.spacing_medlarge)
 
         setStyle(mBinding.textSettingName, setting)
     }
