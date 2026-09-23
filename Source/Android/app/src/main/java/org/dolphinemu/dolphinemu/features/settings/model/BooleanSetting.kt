@@ -139,6 +139,14 @@ enum class BooleanSetting(
         false
     ),
     MAIN_WII_WIILINK_ENABLE(Settings.FILE_DOLPHIN, Settings.SECTION_INI_CORE, "EnableWiiLink", false),
+    MAIN_WII_OPENPAK_ENABLE(Settings.FILE_DOLPHIN, Settings.SECTION_INI_CORE, "EnableOpenPak", false),
+    MAIN_OPENPAK_CLOUD_SAVE(Settings.FILE_DOLPHIN, Settings.SECTION_INI_CORE, "OpenPakCloudSave", true),
+    MAIN_OPENPAK_NOTIFICATIONS(
+        Settings.FILE_DOLPHIN,
+        Settings.SECTION_INI_CORE,
+        "OpenPakNotifications",
+        true
+    ),
     MAIN_DSP_JIT(Settings.FILE_DOLPHIN, Settings.SECTION_INI_DSP, "EnableJIT", true),
     MAIN_TIME_TRACKING(
         Settings.FILE_DOLPHIN,
@@ -1009,6 +1017,7 @@ enum class BooleanSetting(
             MAIN_EMULATE_SKYLANDER_PORTAL,
             MAIN_EMULATE_INFINITY_BASE,
             MAIN_EMULATE_WII_SPEAK,
+            MAIN_WII_OPENPAK_ENABLE,
             ACHIEVEMENTS_ENABLED,
             ACHIEVEMENTS_HARDCORE_ENABLED,
             ACHIEVEMENTS_UNOFFICIAL_ENABLED,

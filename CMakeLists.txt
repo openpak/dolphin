@@ -768,6 +768,10 @@ elseif(MSVC)
     list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Externals/Qt/Qt6.8.3/x64")
   endif()
 endif()
+if(ANDROID)
+  # The NDK has no OpenSSL; the library needs one for HTTPS.
+  include(OpenPakAndroidOpenSSL)
+endif()
 add_subdirectory(Externals/openpak-client)
 if(MSVC)
   # Dolphin's /WX is for Dolphin's code; the library uses the plain C runtime calls.

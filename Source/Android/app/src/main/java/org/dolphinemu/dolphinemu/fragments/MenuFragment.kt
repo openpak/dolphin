@@ -200,6 +200,7 @@ class MenuFragment : Fragment(), View.OnClickListener {
             )
             buttonsActionsMap.append(R.id.menu_exit, EmulationActivity.MENU_ACTION_EXIT)
             buttonsActionsMap.append(R.id.menu_settings, EmulationActivity.MENU_ACTION_SETTINGS)
+            buttonsActionsMap.append(R.id.menu_openpak, EmulationActivity.MENU_ACTION_OPENPAK)
             buttonsActionsMap.append(R.id.menu_skylanders, EmulationActivity.MENU_ACTION_SKYLANDERS)
             buttonsActionsMap.append(
                 R.id.menu_infinity_base,

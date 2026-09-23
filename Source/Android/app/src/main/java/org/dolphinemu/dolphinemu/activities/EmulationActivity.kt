@@ -48,6 +48,7 @@ import org.dolphinemu.dolphinemu.features.settings.model.IntSetting
 import org.dolphinemu.dolphinemu.features.settings.model.Settings
 import org.dolphinemu.dolphinemu.features.settings.model.StringSetting
 import org.dolphinemu.dolphinemu.features.settings.ui.MenuTag
+import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakActivity
 import org.dolphinemu.dolphinemu.features.settings.ui.SettingsActivity
 import org.dolphinemu.dolphinemu.features.skylanders.SkylanderConfig
 import org.dolphinemu.dolphinemu.features.skylanders.model.Skylander
@@ -522,6 +523,7 @@ class EmulationActivity : AppCompatActivity(), ThemeProvider {
             MENU_SET_IR_MODE -> setIRMode()
             MENU_ACTION_CHOOSE_DOUBLETAP -> chooseDoubleTapButton()
             MENU_ACTION_SETTINGS -> SettingsActivity.launch(this, MenuTag.SETTINGS)
+            MENU_ACTION_OPENPAK -> OpenPakActivity.launch(this, OpenPakActivity.Screen.HOME)
             MENU_ACTION_SKYLANDERS -> showSkylanderPortalSettings()
             MENU_ACTION_INFINITY_BASE -> showInfinityBaseSettings()
             MENU_ACTION_EXIT -> emulationFragment!!.stopEmulation()
@@ -1084,6 +1086,7 @@ class EmulationActivity : AppCompatActivity(), ThemeProvider {
         const val MENU_ACTION_SKYLANDERS = 36
         const val MENU_ACTION_INFINITY_BASE = 37
         const val MENU_ACTION_LATCHING_CONTROLS = 38
+        const val MENU_ACTION_OPENPAK = 39
 
         init {
             buttonsActionsMap.apply {
