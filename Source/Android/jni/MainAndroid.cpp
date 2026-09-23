@@ -50,6 +50,7 @@
 #include "Core/State.h"
 #include "Core/System.h"
 #include "jni/NetPlay/NetPlayUICallbacks.h"
+#include "jni/OpenPakNative.h"
 
 #include "DiscIO/Blob.h"
 #include "DiscIO/Enums.h"
@@ -559,6 +560,9 @@ static void Run(JNIEnv* env, std::unique_ptr<BootParameters>&& boot, bool riivol
                                           volume.GetDiscNumber()));
   }
 
+  // OpenPak: the newest cloud copy of the save comes down first (five seconds at most).
+  OpenPakNative::BeforeBoot(*boot);
+
   s_need_nonblocking_alert_msg = true;
   std::unique_lock<std::mutex> surface_guard(s_surface_lock);
 
@@ -572,6 +576,7 @@ static void Run(JNIEnv* env, std::unique_ptr<BootParameters>&& boot, bool riivol
     static constexpr int WAIT_STEP = 25;
     while (Core::GetState(Core::System::GetInstance()) == Core::State::Starting)
       std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_STEP));
+    OpenPakNative::AfterBoot();
   }
 
   s_is_booting.Clear();
@@ -586,6 +591,7 @@ static void Run(JNIEnv* env, std::unique_ptr<BootParameters>&& boot, bool riivol
 
   s_game_metadata_is_valid = false;
   Core::Shutdown(Core::System::GetInstance());
+  OpenPakNative::AfterShutdown();
 
   env->CallStaticVoidMethod(IDCache::GetNativeLibraryClass(),
                             IDCache::GetFinishEmulationActivity());

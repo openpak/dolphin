@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- OpenPak: the logo as a glyph (an open package). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="?attr/colorControlNormal"
+      android:pathData="M11,19.425V12.575L5,9.1V15.95ZM13,19.425L19,15.95V9.1L13,12.575ZM12,10.85L17.925,7.425L12,4L6.075,7.425ZM4,17.7Q3.525,17.425 3.263,16.975Q3,16.525 3,15.975V8.025Q3,7.475 3.263,7.025Q3.525,6.575 4,6.3L11,2.275Q11.475,2 12,2Q12.525,2 13,2.275L20,6.3Q20.475,6.575 20.738,7.025Q21,7.475 21,8.025V15.975Q21,16.525 20.738,16.975Q20.475,17.425 20,17.7L13,21.725Q12.525,22 12,22Q11.475,22 11,21.725Z"/>
+</vector>

@@ -96,6 +96,12 @@ JNIEXPORT jstring JNICALL Java_org_dolphinemu_dolphinemu_model_GameFile_getGameI
   return ToJString(env, GetRef(env, obj)->GetGameID());
 }
 
+JNIEXPORT jlong JNICALL Java_org_dolphinemu_dolphinemu_model_GameFile_getTitleId(JNIEnv* env,
+                                                                                jobject obj)
+{
+  return static_cast<jlong>(GetRef(env, obj)->GetTitleID());
+}
+
 JNIEXPORT jstring JNICALL Java_org_dolphinemu_dolphinemu_model_GameFile_getGameTdbId(JNIEnv* env,
                                                                                      jobject obj)
 {

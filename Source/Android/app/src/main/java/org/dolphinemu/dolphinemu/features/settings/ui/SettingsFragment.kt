@@ -123,6 +123,18 @@ class SettingsFragment : Fragment(), SettingsFragmentView {
         presenter.onViewCreated(menuTag, activity.settings)
     }
 
+    private var openPakRowsShown = false
+
+    override fun onResume() {
+        super.onResume()
+        // The OpenPak rows say who is signed in; the sign-in screen may have changed that.
+        val showsOpenPak = menuTag == MenuTag.SETTINGS || menuTag == MenuTag.CONFIG_OPENPAK
+        if (showsOpenPak && openPakRowsShown && presenter.settings != null) {
+            presenter.loadSettingsList()
+        }
+        openPakRowsShown = showsOpenPak
+    }
+
     override fun onDestroyView() {
         clearSearchResultHighlight()
         searchJob?.cancel()
@@ -381,6 +393,7 @@ class SettingsFragment : Fragment(), SettingsFragmentView {
             titles[MenuTag.CONFIG_GAME_CUBE] = R.string.gamecube_submenu
             titles[MenuTag.CONFIG_SERIALPORT1] = R.string.serialport1_submenu
             titles[MenuTag.CONFIG_WII] = R.string.wii_submenu
+            titles[MenuTag.CONFIG_OPENPAK] = R.string.openpak_settings_section
             titles[MenuTag.CONFIG_ACHIEVEMENTS] = R.string.achievements_submenu
             titles[MenuTag.CONFIG_ADVANCED] = R.string.advanced_submenu
             titles[MenuTag.DEBUG] = R.string.debug_submenu

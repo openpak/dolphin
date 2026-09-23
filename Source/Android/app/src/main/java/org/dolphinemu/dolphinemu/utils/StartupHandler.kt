@@ -20,15 +20,16 @@ object StartupHandler {
 
     @JvmStatic
     fun HandleInit(parent: FragmentActivity) {
+        val gamesToLaunch = getGamesFromIntent(parent.intent)
+
         // Ask the user if he wants to enable analytics if we haven't yet.
-        Analytics.checkAnalyticsInit(parent)
+        Analytics.checkAnalyticsInit(parent, gamesToLaunch.isNullOrEmpty())
 
         // Set up and/or sync Android TV channels
         if (TvUtil.isLeanback(parent)) {
             TvUtil.scheduleSyncingChannel(parent)
         }
 
-        val gamesToLaunch = getGamesFromIntent(parent.intent)
         if (gamesToLaunch != null && gamesToLaunch.isNotEmpty()) {
             // Start the emulation activity, send the ISO passed in and finish the main activity
             EmulationActivity.launch(parent, gamesToLaunch, false, true)

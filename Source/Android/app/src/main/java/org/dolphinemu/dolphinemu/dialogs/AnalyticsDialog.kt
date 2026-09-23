@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.dolphinemu.dolphinemu.R
+import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakUi
 import org.dolphinemu.dolphinemu.utils.Analytics
 
 class AnalyticsDialog : DialogFragment() {
@@ -16,9 +17,11 @@ class AnalyticsDialog : DialogFragment() {
             .setMessage(requireContext().getString(R.string.analytics_desc))
             .setPositiveButton(R.string.yes) { _, _ ->
                 Analytics.firstAnalyticsAdd(true)
+                OpenPakUi.maybeShowConnect(requireActivity())
             }
             .setNegativeButton(R.string.no) { _, _ ->
                 Analytics.firstAnalyticsAdd(false)
+                OpenPakUi.maybeShowConnect(requireActivity())
             }
         return dialog.create()
     }
