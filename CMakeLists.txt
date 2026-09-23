@@ -756,6 +756,13 @@ endif()
 add_subdirectory(Externals/watcher)
 
 # OpenPak: the account, friends and cloud-save client library shared by the OpenPak forks.
+if(NOT ENABLE_QT OR ANDROID)
+  set(OPENPAK_BUILD_QT OFF CACHE BOOL "" FORCE)
+endif()
+if(ANDROID)
+  # The NDK has no OpenSSL; the library needs one for HTTPS.
+  include(OpenPakAndroidOpenSSL)
+endif()
 add_subdirectory(Externals/openpak-client)
 
 # Any other platform or BSD is currently unsupported by cpp-ipc
