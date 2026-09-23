@@ -1,16 +1,31 @@
 name: OpenPak release
 
-# Tag openpak-v1.2.3: a Linux x86_64 build (Qt GUI) attached to a GitHub Release.
+# Tag openpak-v1.2.3: Linux x86_64, Windows x64 and macOS arm64 builds (Qt GUI) on a GitHub
+# Release. The release is created first and every build attaches its own file to it, so a
+# release never waits on workflow artifacts (the organisation's artifact quota can be full).
+# workflow_dispatch builds without publishing.
 on:
   push:
     tags: ['openpak-v*']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
+  release:
+    if: startsWith(github.ref, 'refs/tags/openpak-v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Dolphin ${{ github.ref_name }} (OpenPak)
+          generate_release_notes: true
+
   linux:
+    needs: [release]
+    if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,57 +38,53 @@ jobs:
             qt6-svg-dev libbluetooth-dev libasound2-dev libpulse-dev libgl1-mesa-dev libcurl4-openssl-dev \
             libsystemd-dev libminiupnpc-dev libmbedtls-dev libhidapi-dev libpng-dev libpugixml-dev \
             libsfml-dev libenet-dev libxxhash-dev libzstd-dev liblzma-dev libspng-dev \
-            libfmt-dev libxext-dev libgtk-3-dev
+            libfmt-dev libxext-dev libgtk-3-dev libssl-dev libarchive-dev
       - run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLINUX_LOCAL_DEV=true
       - run: cmake --build build -j$(nproc)
       - run: |
           cd build/Binaries && tar czf ../../dolphin-openpak-${GITHUB_REF_NAME}-linux-x86_64.tar.gz . && cd ../.. && ls -la *.tar.gz
-      - uses: actions/upload-artifact@v4
+      - if: startsWith(github.ref, 'refs/tags/openpak-v')
+        uses: softprops/action-gh-release@v2
         with:
-          name: dolphin-openpak-linux-x86_64
-          path: dolphin-openpak-*.tar.gz
-          retention-days: 3
+          files: dolphin-openpak-*.tar.gz
+
   macos:
+    needs: [release]
+    if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - run: brew install cmake ninja qt@6 ffmpeg
-      - run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qt@6)" -DENABLE_TESTS=OFF
+      - run: brew install cmake ninja qt@6 ffmpeg openssl@3
+      - run: >
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qt@6)"
+          -DENABLE_TESTS=OFF -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" -DOPENSSL_USE_STATIC_LIBS=ON
       - run: cmake --build build -j$(sysctl -n hw.ncpu)
       - run: cd build/Binaries && zip -r -y ../../dolphin-openpak-${GITHUB_REF_NAME}-macos-arm64.zip Dolphin.app
-      - uses: actions/upload-artifact@v4
+      - if: startsWith(github.ref, 'refs/tags/openpak-v')
+        uses: softprops/action-gh-release@v2
         with:
-          name: dolphin-openpak-macos-arm64
-          path: dolphin-openpak-*.zip
-          retention-days: 3
+          files: dolphin-openpak-*.zip
+
   windows:
+    needs: [release]
+    if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - run: cmake -B build -G "Visual Studio 17 2022" -A x64 -DENABLE_TESTS=OFF
+      # openpak-client speaks HTTPS through OpenSSL; linked statically so the zip needs no DLLs.
+      - run: vcpkg install openssl:x64-windows-static-md
+      - shell: bash
+        run: >
+          cmake -B build -G "Visual Studio 17 2022" -A x64 -DENABLE_TESTS=OFF
+          -DOPENSSL_ROOT_DIR="$VCPKG_INSTALLATION_ROOT/installed/x64-windows-static-md" -DOPENSSL_USE_STATIC_LIBS=ON
       - run: cmake --build build --config Release -- /m
       - shell: bash
         run: cd build/Binaries/Release && 7z a ../../../dolphin-openpak-${GITHUB_REF_NAME}-windows-x64.zip . >/dev/null && ls -la ../../../*.zip
-      - uses: actions/upload-artifact@v4
+      - if: startsWith(github.ref, 'refs/tags/openpak-v')
+        uses: softprops/action-gh-release@v2
         with:
-          name: dolphin-openpak-windows-x64
-          path: dolphin-openpak-*.zip
-          retention-days: 3
-  release:
-    needs: [linux, macos, windows]
-    if: startsWith(github.ref, 'refs/tags/openpak-v')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
-      - run: gh release create "${GITHUB_REF_NAME}" artifacts/* --repo "${GITHUB_REPOSITORY}" --title "Dolphin ${GITHUB_REF_NAME} (OpenPak)" --generate-notes
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: dolphin-openpak-*.zip
