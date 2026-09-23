@@ -171,8 +171,15 @@ extern const Info<bool> MAIN_WII_WIILINK_ENABLE;
 // OpenPak: resolve Nintendo WFC and GameSpy names to the OpenPak server (nn-wfc) inside IOS.
 extern const Info<bool> MAIN_WII_OPENPAK_ENABLE;
 extern const Info<std::string> MAIN_WII_OPENPAK_SERVER;
-// OpenPak: cloud saves (Settings -> Wii).
+// OpenPak: cloud saves and the rest of Settings -> OpenPak.
 extern const Info<bool> MAIN_OPENPAK_CLOUD_SAVE;
+extern const Info<bool> MAIN_OPENPAK_NOTIFICATIONS;
+// 0 bottom right, 1 bottom left, 2 top right, 3 top left (the settings list's order).
+extern const Info<int> MAIN_OPENPAK_NOTIFICATION_CORNER;
+extern const Info<bool> MAIN_OPENPAK_CONNECT_ASKED;
+extern const Info<std::string> MAIN_OPENPAK_DEVICE_NAME;
+// Empty: openpak.org. Read at launch, so a change applies from the next start.
+extern const Info<std::string> MAIN_OPENPAK_WEBSITE;
 
 // Main.DSP
 

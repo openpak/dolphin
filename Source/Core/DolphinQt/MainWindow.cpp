@@ -102,6 +102,7 @@
 #include "DolphinQt/HotkeyScheduler.h"
 #include "DolphinQt/InfinityBase/InfinityBaseWindow.h"
 #include "DolphinQt/MenuBar.h"
+#include "DolphinQt/OpenPak/OpenPak.h"
 #include "DolphinQt/NKitWarningDialog.h"
 #include "DolphinQt/NetPlay/NetPlayBrowser.h"
 #include "DolphinQt/NetPlay/NetPlayDialog.h"
@@ -231,6 +232,13 @@ MainWindow::MainWindow(Core::System& system, std::unique_ptr<BootParameters> boo
   ConnectRenderWidget();
   ConnectStack();
   ConnectMenuBar();
+
+  // OpenPak: its menu before Help, toasts, and the connect prompt on a plain interactive launch.
+  OpenPak::Attach(this, m_menu_bar, &m_game_list->GetGameListModel(),
+                  !boot_parameters && !Settings::Instance().IsBatchModeEnabled(), [this] {
+                    ShowSettingsWindow();
+                    m_settings_window->SelectPane(SettingsWindowPaneIndex::OpenPak);
+                  });
 
   QSettings& settings = Settings::GetQSettings();
   restoreState(settings.value(QStringLiteral("mainwindow/state")).toByteArray());
@@ -1213,6 +1221,10 @@ void MainWindow::StartGame(std::unique_ptr<BootParameters>&& parameters)
     m_pending_boot = std::move(parameters);
     return;
   }
+
+  // OpenPak: the newest cloud copy of the title's save lands before it boots.
+  if (parameters)
+    OpenPak::BeforeBoot(this, *parameters);
 
   // We need the render widget before booting.
   ShowRenderWidget();

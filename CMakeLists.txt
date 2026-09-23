@@ -756,6 +756,18 @@ endif()
 add_subdirectory(Externals/watcher)
 
 # OpenPak: the account, friends and cloud-save client library shared by the OpenPak forks.
+# Its Qt dialogs only where Dolphin has a Qt frontend (not Android, not a headless build), with
+# the Qt that DolphinQt uses: on Windows that is the bundled one, which has no QtNetwork (the
+# library goes without it).
+if(NOT ENABLE_QT OR ANDROID)
+  set(OPENPAK_BUILD_QT OFF CACHE BOOL "" FORCE)
+elseif(MSVC)
+  if(_M_ARM_64)
+    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Externals/Qt/Qt6.8.3/ARM64")
+  else()
+    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Externals/Qt/Qt6.8.3/x64")
+  endif()
+endif()
 add_subdirectory(Externals/openpak-client)
 
 # Any other platform or BSD is currently unsupported by cpp-ipc

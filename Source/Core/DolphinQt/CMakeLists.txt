@@ -461,6 +461,7 @@ PRIVATE
   imgui
   implot
   openpak::client
+  openpak::qt
 )
 
 if(ENABLE_SDL)
