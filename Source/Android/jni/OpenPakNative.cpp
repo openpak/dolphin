@@ -67,6 +67,7 @@ enum class Event : jint
   Conflict = 1,
   Pushed = 2,
   PushFailed = 3,
+  RedirectsChanged = 4,
 };
 
 jclass s_notifier_class = nullptr;
@@ -401,6 +402,11 @@ JNIEXPORT void JNICALL Java_org_dolphinemu_dolphinemu_features_openpak_model_Ope
     openpak::Platform::SetClient("dolphin", GetJString(env, jversion));
     Api::SetSavesPlatform(PLATFORM);
     Api::SetSaveDevice(GetJString(env, jdevice));
+
+    // OpenPak changed the Wii redirects while the app runs: a snackbar says a restart of the app
+    // applies them (the profile is fetched once per app start).
+    openpak::NetworkProfile::SetChangeNotifier(
+        [] { NotifyApp(Event::RedirectsChanged, {}, {}); });
 
     // One conditional request per app start (never per game), and only when the player asked
     // for OpenPak: off means upstream's behaviour, with nothing sent anywhere.

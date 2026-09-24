@@ -12,7 +12,7 @@ import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakActivity
 import org.dolphinemu.dolphinemu.features.openpak.ui.OpenPakUi
 
 /**
- * What the native cloud-save hooks tell the app (openpak-ux-spec §3.10, §4.3): the words come
+ * What the native cloud-save hooks (and the redirects re-check) tell the app (openpak-ux-spec §3.10, §4.3): the words come
  * from the string table here, and the app shows them as a Snackbar (or, during emulation, the
  * native side shows them as the overlay message).
  */
@@ -22,6 +22,7 @@ object OpenPakNotifier {
     const val CONFLICT = 1
     const val PUSHED = 2
     const val PUSH_FAILED = 3
+    const val REDIRECTS_CHANGED = 4
 
     private val main = Handler(Looper.getMainLooper())
     private var checking: Snackbar? = null
@@ -35,6 +36,7 @@ object OpenPakNotifier {
             CONFLICT -> context.getString(R.string.openpak_toast_saves_conflict, name)
             PUSHED -> context.getString(R.string.openpak_toast_saves_pushed, name)
             PUSH_FAILED -> context.getString(R.string.openpak_toast_saves_push_failed, name, detail)
+            REDIRECTS_CHANGED -> context.getString(R.string.openpak_toast_redirects_changed_emulator)
             else -> ""
         }
     }
@@ -46,6 +48,11 @@ object OpenPakNotifier {
         val message = text(kind, name, detail)
         main.post {
             val activity = DolphinApplication.getAppActivity() ?: return@post
+            // The redirects notice has nowhere to open: a restart is what it asks for.
+            if (kind == REDIRECTS_CHANGED) {
+                OpenPakUi.snackbar(activity, message)
+                return@post
+            }
             OpenPakUi.snackbar(activity, message, R.string.openpak_page_saves) {
                 OpenPakActivity.launch(activity, OpenPakActivity.Screen.SAVES)
             }
