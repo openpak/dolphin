@@ -53,7 +53,7 @@ jobs:
   macos:
     needs: [release]
     if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
-    runs-on: macos-14
+    runs-on: macos-15  # Xcode 16: upstream Dolphin needs parenthesised aggregate init (C++20), which Xcode 15.4 lacks
     steps:
       - uses: actions/checkout@v4
         with:
