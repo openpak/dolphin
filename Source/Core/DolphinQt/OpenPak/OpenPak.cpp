@@ -276,6 +276,7 @@ public:
   std::string NatIp() const override { return {}; }
   void SetGuestInputSuspended(bool) override {}
   openpak::qt::Navigation* CreateNavigation(QObject*) override { return nullptr; }
+  void NetworkRedirectsChanged() override;
 
   void AccountChanged(bool linked)
   {
@@ -302,6 +303,14 @@ void Toast(const QString& text, Kind kind)
 {
   if (g_toast)
     g_toast->Show(text, {}, {}, kind);
+}
+
+// OpenPak changed the Wii redirects while Dolphin runs. The profile is fetched once per start
+// (never per game), so only a new Dolphin process picks them up.
+void DolphinHost::NetworkRedirectsChanged()
+{
+  Toast(openpak::qt::RedirectsChangedText(openpak::qt::RedirectsApplied::AtEmulatorStart),
+        Kind::Account);
 }
 
 QString GameNameOf(u64 title_id)
